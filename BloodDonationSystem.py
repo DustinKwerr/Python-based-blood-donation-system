@@ -1,3 +1,5 @@
+import mysql.connector
+from mysql.connector import Error
 from abc import ABC, abstractmethod 
 
 # Abstract class for the blood donation system
@@ -66,4 +68,3 @@ class Donor(Person):
     
     """POLYMORPHISM: The display_info method is overridden in the Donor class to provide specific details about donors. This allows the same method name to behave differently based on the context (i.e., whether it's called on a Person or a Donor), demonstrating polymorphism."""
 
-    
