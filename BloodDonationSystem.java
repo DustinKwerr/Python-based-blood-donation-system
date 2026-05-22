@@ -1,5 +1,3 @@
-package Object_Oriented_Programming;
-
 import java.util.*;
 import java.io.*;
 
