@@ -49,7 +49,7 @@ class Donor(Person):
     """INHERITANCE: The Donor class inherits from the Person class, allowing it to reuse the attributes and methods of Person while adding its own specific attributes (blood type and weight) and behaviors (displaying donor-specific information)."""
 
     def __init__(self, name: str, age: int, contact: str, blood_type: str, weight: float):
-        super().__init__(name, age, contact="")
+        super().__init__(name, age, contact)
         self.__blood_type = blood_type
         self.__weight = weight
 
@@ -137,28 +137,3 @@ class BloodDonationDatabase(Searchable):
             if connection.is_connected():
                 cursor.close()
                 connection.close()
-
-
-# =====================================================================
-# 4. THE EXECUTION BLOCK (The main entry point)
-# =====================================================================
-if __name__ == "__main__":
-    # This block only runs if you execute THIS file directly.
-    print("Initializing Blood Donation System...")
-    
-    db = BloodDonationDatabase(
-        host="localhost",
-        user="root",
-        password="",
-        database="Blood_Donation_System_Database"
-    )
-
-    print("\n--- Testing Name Search ---")
-    donor = db.search_by_name("John Doe")
-    if donor:
-        donor.display_info()
-    else:
-        print("No matching donor found. Add a 'John Doe' row in MariaDB to test full data mapping!")
-    
-
-
