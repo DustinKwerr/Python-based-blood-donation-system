@@ -1,0 +1,24 @@
+CD C:/xampp/mysql/bin
+
+mysql -u root
+
+Create database Blood_Donation_System_Database;
+Use Blood_Donation_System_Database;
+
+Create table donors (
+	id int AUTO_INCREMENT PRIMARY KEY,
+    name varchar(50) NOT NULL,
+    age int NOT NULL,
+    contact varchar(50) NOT NULL,
+    blood_type varchar(5) NOT NULL,
+    weight decimal(5,2) NOT NULL
+);
+
+CREATE TABLE blood_inventory (
+    blood_type VARCHAR(5) PRIMARY KEY,
+    units INT NOT NULL DEFAULT 0
+);
+
+Insert Into donors 
+Values ('', 'Dustin Indolos', '19', '09154652555', 'A+', '69.4');
+

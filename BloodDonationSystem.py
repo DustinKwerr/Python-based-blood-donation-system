@@ -97,7 +97,7 @@ class BloodDonationDatabase(Searchable):
             print(f"Error while connecting to database: {e}")
             return None
         finally:
-            if connection.is_connected():
+            if connection and connection.is_connected():
                 cursor.close()
                 connection.close()
 
@@ -134,6 +134,53 @@ class BloodDonationDatabase(Searchable):
             print(f"Error while connecting to database: {e}")
             return [] # Return an empty list if a database error happens
         finally:
-            if connection.is_connected():
+            if connection and connection.is_connected():
+                cursor.close()
+                connection.close()
+
+class BloodInventory:
+    def __init__(self, db_instance):
+        # ENCAPSULATION: We hide the database hook connection privately.
+        # It relies on the main database engine to perform execution steps.
+        self.__db = db_instance 
+
+    # REPLACES java's addBlood() -> Persists calculation to MariaDB
+    def add_blood(self, blood_type: str, units: int) -> bool:
+        query = "UPDATE blood_inventory SET units = units + %s WHERE blood_type = %s"
+        try:
+            # Reusing the private database connection hook
+            connection = self.__db._BloodDonationDatabase__get_connection() 
+            cursor = connection.cursor()
+            cursor.execute(query, (units, blood_type.upper()))
+            connection.commit()
+            return True
+        except Exception as e:
+            print(f"Inventory Error: {e}")
+            return False
+        finally:
+            if connection and connection.is_connected():
+                cursor.close()
+                connection.close()
+
+    # REPLACES java's viewInventory() -> Returns data back as a clean Python Dictionary
+    def get_inventory_data(self) -> dict:
+        query = "SELECT blood_type, units FROM blood_inventory"
+        inventory_dict = {}
+        try:
+            connection = self.__db._BloodDonationDatabase__get_connection()
+            cursor = connection.cursor()
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            
+            # Map the database rows into an encapsulated dictionary structure
+            for row in rows:
+                inventory_dict[row[0]] = row[1]
+                
+            return inventory_dict
+        except Exception as e:
+            print(f"Inventory Error: {e}")
+            return {}
+        finally:
+            if connection and connection.is_connected():
                 cursor.close()
                 connection.close()
