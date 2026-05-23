@@ -138,6 +138,50 @@ class BloodDonationDatabase(Searchable):
                 cursor.close()
                 connection.close()
 
+    def register_donor(self, donor: Donor) -> bool:
+        """Inserts a new donor into the database and adds 1 unit to the blood inventory."""
+        insert_donor_query = """
+            INSERT INTO donors (name, age, contact, blood_type, weight) 
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        update_inventory_query = """
+            UPDATE blood_inventory 
+            SET units = units + 1 
+            WHERE blood_type = %s
+        """
+        
+        connection = None
+        try:
+            connection = self.__get_connection()
+            cursor = connection.cursor()
+
+            # 1. Insert Donor Profile
+            donor_values = (
+                donor.get_name(),
+                donor.get_age(),
+                donor.get_contact(),
+                donor.get_blood_type(),
+                donor.get_weight()
+            )
+            cursor.execute(insert_donor_query, donor_values)
+
+            # 2. Automatically Increment Blood Unit Count in Inventory
+            cursor.execute(update_inventory_query, (donor.get_blood_type().upper(),))
+
+            # Commit both operations as a single transaction
+            connection.commit()
+            return True
+
+        except Error as e:
+            print(f"Database insertion error: {e}")
+            if connection:
+                connection.rollback() # Roll back transaction changes if an entry error hits
+            return False
+        finally:
+            if connection and connection.is_connected():
+                cursor.close()
+                connection.close()
+
 class BloodInventory:
     def __init__(self, db_instance):
         # ENCAPSULATION: We hide the database hook connection privately.

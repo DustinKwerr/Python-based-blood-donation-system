@@ -19,6 +19,14 @@ CREATE TABLE blood_inventory (
     units INT NOT NULL DEFAULT 0
 );
 
+INSERT INTO blood_inventory (blood_type, units) VALUES 
+('A+', 0), ('A-', 0), 
+('B+', 0), ('B-', 0), 
+('O+', 0), ('O-', 0), 
+('AB+', 0), ('AB-', 0);
+
+UPDATE blood_inventory SET units = 0;
+
 Insert Into donors 
 Values ('', 'Dustin Indolos', '19', '09154652555', 'A+', '69.4');
 
